@@ -27,8 +27,12 @@ public class ConversationDistributer {
     @Autowired
     ConversationRepository conversationRepository;
     @Transactional
-    @Scheduled(cron = "0 */1 * * * ?")
+    @Scheduled(cron = "0 */2 * * * ?")
     public void distribute() {
+
+        long start = System.currentTimeMillis();
+        long duration;
+        System.out.println("Start : "+start);
         applicationBridgeService.getAllConversations();
         List<Conversation> conversationList = conversationRepository.getAllByRepresentativeIsNull();
 
@@ -58,9 +62,13 @@ public class ConversationDistributer {
                 representativeRepository.save(selectedRepresentative);
             }
         }
+
+        List<Representative> representatives = representativeRepository.findAll();
+        representatives.forEach(Representative::getWorkload);
+        representativeRepository.saveAll(representatives);
+        long end=System.currentTimeMillis();
+        duration=end-start;
+        System.out.println("End : "+ end);
+        System.out.println("Duration" + duration);
     }
-
-
-
-
 }

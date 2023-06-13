@@ -6,8 +6,10 @@ import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ytuce.gp.mfmsp.Constants.AccessTokenName;
 import ytuce.gp.mfmsp.Constants.Platform;
 import ytuce.gp.mfmsp.Entity.Conversation;
+import ytuce.gp.mfmsp.Repository.AccessTokenRepository;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
 import ytuce.gp.mfmsp.Repository.MessageRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
@@ -43,8 +45,8 @@ public class InstagramServiceImpl implements ExternalService {
     @Autowired
     private MessageRepository messageRepository;
 
-    private static final String accessToken = "EAAwXkaAKP3oBAMlnmP8hIWBI2mhZC3EBY9px7vPVcvV0FulsKYyqeV6pEraSLThytfrAncGVEHfHQ60exSdloZBelkRAjLbxqjlq33rKs8ileUrjKoFc56Qh7NHNSDvehFr3qjyNv5xEdXP7eZATDRbsyLiRAqJqAzL1I1fztZCwUBALZBmUAK93T05ZAMVJCy9TFVZCUGoZBUbZCcHbQwQ973kbTc1JZBBLEZD";
-
+    @Autowired
+    private AccessTokenRepository accessTokenRepository;
     private static final String pageId = "103158119328523";
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -62,6 +64,7 @@ public class InstagramServiceImpl implements ExternalService {
 
             JSONObject message = new JSONObject();
             message.put("text", messageText);
+            String accessToken = accessTokenRepository.getByName(AccessTokenName.META_ACCESS_TOKEN.name()).getValue();
 
             // Create the URL for the request
             String url = "https://graph.facebook.com/v15.0/103158119328523/messages?" +
@@ -112,6 +115,8 @@ public class InstagramServiceImpl implements ExternalService {
 
     public void receiveMessages() {
         try {
+            String accessToken = accessTokenRepository.getByName(AccessTokenName.META_ACCESS_TOKEN.name()).getValue();
+
             // Create the URL for the request
             String url = "https://graph.facebook.com/v15.0/103158119328523/conversations?" +
                     "fields=messages%7Bmessage%2Cid%2Cto%2Cfrom%2Ccreated_time%7D" +

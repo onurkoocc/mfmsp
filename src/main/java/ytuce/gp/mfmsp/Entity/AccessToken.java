@@ -2,18 +2,18 @@ package ytuce.gp.mfmsp.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import ytuce.gp.mfmsp.Constants.AccessTokenName;
+
 @Entity
-@Table(name = "Configuration")
-public class Configuration {
+@Table(name = "access_token")
+@Data
+public class AccessToken {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "`key`")
-    private String key;
+    private String name;
 
     private String value;
 

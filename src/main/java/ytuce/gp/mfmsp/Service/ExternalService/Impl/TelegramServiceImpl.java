@@ -8,9 +8,11 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updates.GetUpdates;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import ytuce.gp.mfmsp.Constants.AccessTokenName;
 import ytuce.gp.mfmsp.Constants.Platform;
 import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Entity.Message;
+import ytuce.gp.mfmsp.Repository.AccessTokenRepository;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
 
@@ -23,6 +25,10 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
 
     @Autowired
     private ConversationRepository conversationRepository;
+
+
+    @Autowired
+    private AccessTokenRepository accessTokenRepository;
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -100,12 +106,12 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
     @Override
     public String getBotToken() {
         // Return the bot token provided by Telegram API
-        return "6061540465:AAH1ZpFF7tN1SlnEnzrOIYI6IYqkTLQEgYA";
+        return accessTokenRepository.getByName(AccessTokenName.TELEGRAM_BOT_TOKEN.name()).getValue();
     }
 
     @Override
     public String getBotUsername() {
         // Return the bot username provided by Telegram API
-        return "integrationapplicationbot";
+        return accessTokenRepository.getByName(AccessTokenName.TELEGRAM_BOT_USERNAME.name()).getValue();
     }
 }

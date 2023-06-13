@@ -8,9 +8,11 @@ import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.v1.DirectMessage;
 import twitter4j.v1.ResponseList;
+import ytuce.gp.mfmsp.Constants.AccessTokenName;
 import ytuce.gp.mfmsp.Constants.Platform;
 import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Entity.Message;
+import ytuce.gp.mfmsp.Repository.AccessTokenRepository;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
 
@@ -28,12 +30,10 @@ public class TwitterServiceImpl implements ExternalService{
     @Autowired
     private ConversationRepository conversationRepository;
 
+    @Autowired
+    private AccessTokenRepository accessTokenRepository;
+
     private static final long ACCOUNT_ID=927322358095982593L;
-    private static final String BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAP07lQEAAAAAdd0aNzcaThk3%2FLDdaNz%2FyeNC8x0%3DmKxXZqBZPpsbwudBQAMjQQUjQhKIT00qqX8y3W9Kz53qmWJx9V";
-    private static final String CONSUMER_KEY = "4KRi5K8z4DkPCxtAiRD2sy664";
-    private static final String CONSUMER_SECRET = "itFinGPoSOZlELMV0kD4GCBWQVV5SXkw0NaHaJli7hZKHrG6H0";
-    private static final String ACCESS_TOKEN = "927322358095982593-VOiuloeUUhpoD5lmuzsIwnrkIAtOidD";
-    private static final String ACCESS_TOKEN_SECRET = "D8HnyT48vSKcMxUuI97Rvkgac35aCr4Uw4xOu2RpfUz5U";
 
 
     public void connect(){
@@ -41,10 +41,17 @@ public class TwitterServiceImpl implements ExternalService{
 
     }
 
-    public void sendMessage(String recipient, String messageText) {
-        Twitter twitter = Twitter.newBuilder().prettyDebugEnabled(true).oAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET).
+    private Twitter twitterBuilder(){
+        String CONSUMER_KEY = accessTokenRepository.getByName(AccessTokenName.TWITTER_CONSUMER_KEY.name()).getValue();
+        String CONSUMER_SECRET = accessTokenRepository.getByName(AccessTokenName.TWITTER_CONSUMER_SECRET.name()).getValue();
+        String ACCESS_TOKEN = accessTokenRepository.getByName(AccessTokenName.TWITTER_ACCESS_TOKEN.name()).getValue();
+        String ACCESS_TOKEN_SECRET = accessTokenRepository.getByName(AccessTokenName.TWITTER_ACCESS_TOKEN_SECRET.name()).getValue();
+        return Twitter.newBuilder().prettyDebugEnabled(true).oAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET).
                 oAuthAccessToken(ACCESS_TOKEN,ACCESS_TOKEN_SECRET).build();
-        //1315004293523668994L Maide
+    }
+
+    public void sendMessage(String recipient, String messageText) {
+        Twitter twitter = twitterBuilder();
         try {
             twitter.v1().directMessages().sendDirectMessage(Long.parseLong(recipient),messageText);
         } catch (TwitterException e) {
@@ -54,8 +61,7 @@ public class TwitterServiceImpl implements ExternalService{
     }
     public void receiveMessages(){
         try {
-            Twitter twitter = Twitter.newBuilder().prettyDebugEnabled(true).oAuthConsumer(CONSUMER_KEY,CONSUMER_SECRET).
-                    oAuthAccessToken(ACCESS_TOKEN,ACCESS_TOKEN_SECRET).build();
+            Twitter twitter = twitterBuilder();
             // Make API request to get list of direct messages events
             ResponseList<DirectMessage> messages = twitter.v1().directMessages().getDirectMessages(100);
             // Print out list of messages
