@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface RepresentativeRepository extends JpaRepository<Representative,Integer> {
-
+    Representative getByEmail(String email);
 }

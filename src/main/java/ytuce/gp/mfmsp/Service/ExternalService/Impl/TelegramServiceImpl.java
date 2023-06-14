@@ -14,6 +14,7 @@ import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Entity.Message;
 import ytuce.gp.mfmsp.Repository.AccessTokenRepository;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
+import ytuce.gp.mfmsp.Repository.MessageRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
 
 import java.util.*;
@@ -26,7 +27,8 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
     @Autowired
     private ConversationRepository conversationRepository;
 
-
+    @Autowired
+    private MessageRepository messageRepository;
     @Autowired
     private AccessTokenRepository accessTokenRepository;
 
@@ -54,6 +56,8 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
         message.setReadStatus(true);
         message.setText(text);
         conversation.addMessage(message);
+        messageRepository.save(message);
+        conversationRepository.save(conversation);
         try {
             execute(sendMessage);
         } catch (Exception e) {

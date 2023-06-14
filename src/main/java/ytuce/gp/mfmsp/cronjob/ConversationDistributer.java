@@ -36,7 +36,7 @@ public class ConversationDistributer {
         applicationBridgeService.getAllConversations();
         List<Conversation> conversationList = conversationRepository.getAllByRepresentativeIsNull();
 
-
+    //
         for (Conversation conversation : conversationList) {
             List<Representative> representativeList = representativeRepository.findAll();
             HashMap<Integer, Integer> representativeToWorkloadHashMap = new HashMap<>();

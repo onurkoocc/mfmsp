@@ -1,5 +1,6 @@
 package ytuce.gp.mfmsp.Service.ExternalService.Impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,20 +54,21 @@ public class FacebookServiceImpl implements ExternalService {
 
     public void sendMessage(String recipientId, String messageText) {
         try {
+            ObjectMapper mapper = new ObjectMapper();
             // Create the JSON objects for the payload
-            JSONObject recipient = new JSONObject();
+            Map<String, String> recipient = new HashMap<>();
             recipient.put("id", recipientId);
 
-            JSONObject message = new JSONObject();
+            Map<String, String> message = new HashMap<>();
             message.put("text", messageText);
 
             String accessToken = accessTokenRepository.getByName(AccessTokenName.META_ACCESS_TOKEN.name()).getValue();
 
             // Create the URL for the request
             String url = "https://graph.facebook.com/v15.0/103158119328523/messages?" +
-                    "recipient=" + recipient.toString() +
+                    "recipient=" + URLEncoder.encode(mapper.writeValueAsString(recipient), StandardCharsets.UTF_8) +
                     "&messaging_type=RESPONSE" +
-                    "&message=" + message.toString() +
+                    "&message=" + URLEncoder.encode(mapper.writeValueAsString(message), StandardCharsets.UTF_8)+
                     "&access_token=" + accessToken;
 
             URL obj = new URL(url);
@@ -172,6 +175,14 @@ public class FacebookServiceImpl implements ExternalService {
                 continue;
             }
             String mapId = externalConversation.getId();
+            int i=0;
+            while(i<externalConversation.getMessages().getData().size() && externalConversation.getMessages().getData().get(i).getFrom().getId().equals(pageId)){
+                i++;
+            }
+            if(i<externalConversation.getMessages().getData().size()){
+                mapId = externalConversation.getMessages().getData().get(i).getFrom().getId();
+            }
+
             ytuce.gp.mfmsp.Entity.Conversation conversation = conversationMap.get(mapId);
             if (conversation == null) {
                 conversation = new ytuce.gp.mfmsp.Entity.Conversation();
