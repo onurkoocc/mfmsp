@@ -14,25 +14,20 @@ public class Representative extends BaseUser {
     private List<Conversation> conversationList;
     private Integer successRate;
 
-    private Integer workload;
+    private Long workload;
 
-    public Integer getWorkload() {
+    public Long getWorkload() {
         this.workload=calculateWorkLoad();
         return workload;
     }
 
-    private Integer calculateWorkLoad(){
-        int tmpWorkload=0;
+    private Long calculateWorkLoad(){
         if(conversationList == null){
             conversationList=new ArrayList<>();
-        }else{
-            for(Conversation conversation:conversationList){
-                tmpWorkload+=conversation.calculateWorkLoad();
-            }
         }
-        return tmpWorkload;
+        return conversationList.stream().mapToLong(Conversation::calculateWorkLoad).sum()+conversationList.size()* 3L;
     }
-    private void setWorkload(Integer workload) {
+    private void setWorkload(Long workload) {
         this.workload = workload;
     }
 

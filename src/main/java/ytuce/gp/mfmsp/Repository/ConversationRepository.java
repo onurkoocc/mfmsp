@@ -22,4 +22,6 @@ public interface ConversationRepository extends JpaRepository<Conversation, Inte
     List<Conversation> getAllByRepresentativeIsNull();
 
     List<Conversation> getConversationsByRepresentative_Id(Integer id);
+
+    List<Conversation> getAllByHasEndedFalseOrHasEndedNull();
 }

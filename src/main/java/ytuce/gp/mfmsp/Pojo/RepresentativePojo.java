@@ -15,7 +15,7 @@ public class RepresentativePojo {
     private List<ConversationPojo> conversationList;
     private Integer successRate;
 
-    private Integer workload;
+    private Long workload;
 
     public static RepresentativePojo entityToPojoBuilder(Representative representative){
         if(representative==null){

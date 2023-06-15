@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ytuce.gp.mfmsp.Entity.Conversation;
+import ytuce.gp.mfmsp.Entity.Message;
 import ytuce.gp.mfmsp.Entity.Representative;
 import ytuce.gp.mfmsp.Optaplanner.DistributionService;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
@@ -39,14 +40,14 @@ public class ConversationDistributer {
     //
         for (Conversation conversation : conversationList) {
             List<Representative> representativeList = representativeRepository.findAll();
-            HashMap<Integer, Integer> representativeToWorkloadHashMap = new HashMap<>();
+            HashMap<Integer, Long> representativeToWorkloadHashMap = new HashMap<>();
             for (Representative representative : representativeList) {
                 if (!representativeToWorkloadHashMap.containsKey(representative.getId())) {
-                    representativeToWorkloadHashMap.put(representative.getId(), 0);
+                    representativeToWorkloadHashMap.put(representative.getId(), 0L);
                 }
                 representativeToWorkloadHashMap.put(representative.getId(), representative.getWorkload());
             }
-            int minimumWorkload = Integer.MAX_VALUE;
+            long minimumWorkload = Long.MAX_VALUE;
             Integer selectedRepresentativeId = null;
             for(Integer i:representativeToWorkloadHashMap.keySet()){
                 if(minimumWorkload>representativeToWorkloadHashMap.get(i)){
@@ -58,6 +59,7 @@ public class ConversationDistributer {
                 Representative selectedRepresentative = representativeRepository.getReferenceById(selectedRepresentativeId);
                 selectedRepresentative.addConversation(conversation);
                 conversation.setRepresentative(selectedRepresentative);
+                conversation.setHasEnded(false);
                 conversationRepository.save(conversation);
                 representativeRepository.save(selectedRepresentative);
             }
@@ -71,4 +73,27 @@ public class ConversationDistributer {
         System.out.println("End : "+ end);
         System.out.println("Duration" + duration);
     }
+
+    @Transactional
+    @Scheduled(cron = "0 */10 * * * ?")
+    public void reassign() {
+        List<Conversation> conversations = conversationRepository.getAllByHasEndedFalseOrHasEndedNull();
+        for(Conversation conversation:conversations){
+            if(conversation==null){
+                continue;
+            }
+            if(conversation.getMessages()==null || conversation.getMessages().isEmpty()){
+                continue;
+            }
+            Message lastMessage = conversation.getMessages().get(conversation.getMessages().size()-1);
+            if(!lastMessage.getDirection()&&(System.currentTimeMillis()-lastMessage.getTime())>1000*60*30){
+                //conversation.getRepresentative().getConversationList().remove(conversation);
+                conversation.setRepresentative(null);
+
+                conversationRepository.save(conversation);
+            }
+        }
+
+    }
+
 }

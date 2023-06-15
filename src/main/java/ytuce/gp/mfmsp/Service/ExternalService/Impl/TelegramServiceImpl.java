@@ -84,9 +84,10 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
                     conversation.setPlatform(Platform.TELEGRAM);
                     conversation.setExternalId(String.valueOf(update.getMessage().getChatId()));
                     conversation.setMessages(new ArrayList<>());
+                    conversation.setHasEnded(false);
                 }
                 Message message = new Message();
-                message.setTime(Long.valueOf(update.getMessage().getDate()));
+                message.setTime(Long.valueOf(update.getMessage().getDate())*1000);
                 message.setText(update.getMessage().getText());
                 message.setDirection(false);
                 message.setExternalId(String.valueOf(update.getMessage().getMessageId()));

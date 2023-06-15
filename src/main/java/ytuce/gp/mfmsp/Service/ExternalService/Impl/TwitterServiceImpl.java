@@ -86,6 +86,7 @@ public class TwitterServiceImpl implements ExternalService{
 
             if (conversation == null) {
                 conversation = new Conversation();
+                conversation.setHasEnded(false);
                 conversation.setPlatform(Platform.TWITTER);
                 conversation.setExternalId(String.valueOf(mapId));
             }

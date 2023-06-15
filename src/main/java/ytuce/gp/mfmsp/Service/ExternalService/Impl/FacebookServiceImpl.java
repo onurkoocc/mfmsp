@@ -186,6 +186,7 @@ public class FacebookServiceImpl implements ExternalService {
             ytuce.gp.mfmsp.Entity.Conversation conversation = conversationMap.get(mapId);
             if (conversation == null) {
                 conversation = new ytuce.gp.mfmsp.Entity.Conversation();
+                conversation.setHasEnded(false);
                 conversation.setPlatform(Platform.FACEBOOK);
                 conversation.setExternalId(mapId);
             }

@@ -192,6 +192,7 @@ public class InstagramServiceImpl implements ExternalService {
             ytuce.gp.mfmsp.Entity.Conversation conversation = conversationMap.get(mapId);
             if (conversation == null) {
                 conversation = new ytuce.gp.mfmsp.Entity.Conversation();
+                conversation.setHasEnded(false);
                 conversation.setPlatform(Platform.INSTAGRAM);
                 conversation.setExternalId(mapId);
             }

@@ -2,6 +2,7 @@ package ytuce.gp.mfmsp.Entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
+import org.glassfish.grizzly.http.server.util.StringParser;
 
 import java.util.Objects;
 
@@ -16,10 +17,20 @@ public class Message {
     private Long time;
     private Boolean direction;
     private Boolean readStatus;
+
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
+
+    public Long calculateWorkLoad(){
+        String[] words = text.split(" ");
+        if(direction) {
+            return (long)words.length * 2L;
+        }
+        return (long) words.length;
+    }
 
     public Message() {
     }

@@ -11,6 +11,7 @@ import ytuce.gp.mfmsp.Optaplanner.ConversationDifficultyComparator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "conversation")
@@ -25,6 +26,7 @@ public class Conversation {
     private Platform platform;
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages;
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean hasEnded;
     private Integer satisfactionRate;
     private Integer duration;
@@ -34,11 +36,14 @@ public class Conversation {
     @PlanningVariable(valueRangeProviderRefs = "representativeRange")
     private Representative representative;
 
-    public int calculateWorkLoad() {
+    public Long calculateWorkLoad() {
         if(messages==null){
             messages=new ArrayList<>();
+            return 0L;
         }
-        return messages.size();
+        //3000 -> dakika sayısı*2 katsayı
+        long duration = (messages.get(messages.size()-1).getTime()-messages.get(0).getTime())/30000L;
+        return messages.stream().mapToLong(Message::calculateWorkLoad).sum()+messages.size()+duration;
     }
     public int getMessageCount() {
         if(messages==null){
