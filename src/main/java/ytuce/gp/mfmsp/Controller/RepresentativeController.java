@@ -27,6 +27,8 @@ import ytuce.gp.mfmsp.Service.ExternalService.Impl.TwitterServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -75,9 +77,23 @@ public class RepresentativeController {
         if (representative == null) {
             return ResponseEntity.badRequest().body("Representative not found");
         }
-        List<ConversationPojo> conversationPojos = RepresentativePojo.entityToPojoBuilder(representative).getConversationList();
+        List<ConversationPojo> conversationPojos = RepresentativePojo.entityToPojoBuilder(representative).getConversationList()
+                .stream().filter(c->!c.getHasEnded()).collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }
+
+    @GetMapping("/getallendedconversationsoftherepresentative")
+    public ResponseEntity getAllEndedConversations() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Representative representative = representativeRepository.getByEmail(userDetails.getUsername());
+        if (representative == null) {
+            return ResponseEntity.badRequest().body("Representative not found");
+        }
+        List<ConversationPojo> conversationPojos = RepresentativePojo.entityToPojoBuilder(representative).getConversationList()
+                .stream().filter(ConversationPojo::getHasEnded).collect(Collectors.toList());
+        return ResponseEntity.ok(conversationPojos);
+    }
+
 
     @PostMapping("/sendmessagebyconversationid")
     public ResponseEntity sendMessageByConversationId(
@@ -96,6 +112,21 @@ public class RepresentativeController {
         externalService.sendMessage(conversation.getExternalId(),sendMessagePojo.getText());
         return ResponseEntity.ok("Message send successful");
     }
+
+    @PostMapping("/endconversationbyid/{id}")
+    public ResponseEntity endConversationById(@PathVariable("id") Integer id) {
+        Optional<Conversation> optConversation = conversationRepository.findById(id);
+        if(!optConversation.isPresent()){
+            return ResponseEntity.badRequest().body("Conversation not found");
+
+        }
+        Conversation conversation = optConversation.get();
+        conversation.setHasEnded(true);
+        conversationRepository.save(conversation);
+        return ResponseEntity.ok("Conversation ended");
+    }
+
+
 
 
 }
