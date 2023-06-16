@@ -78,7 +78,7 @@ public class RepresentativeController {
             return ResponseEntity.badRequest().body("Representative not found");
         }
         List<ConversationPojo> conversationPojos = RepresentativePojo.entityToPojoBuilder(representative).getConversationList()
-                .stream().filter(c->!c.getHasEnded()).collect(Collectors.toList());
+                .stream().filter(c -> !c.getHasEnded()).collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }
 
@@ -98,35 +98,33 @@ public class RepresentativeController {
     @PostMapping("/sendmessagebyconversationid")
     public ResponseEntity sendMessageByConversationId(
             @RequestBody SendMessagePojo sendMessagePojo) {
-        if(sendMessagePojo==null){
+        if (sendMessagePojo == null) {
             return ResponseEntity.badRequest().body("Request data must be not null");
         }
-        Conversation conversation = conversationRepository.getReferenceById(sendMessagePojo.getId());
-        if (conversation == null) {
+        Optional<Conversation> optConversation = conversationRepository.findById(sendMessagePojo.getId());
+        if (optConversation.isEmpty()) {
             return ResponseEntity.badRequest().body("Conversation not found by this id");
         }
+        Conversation conversation = optConversation.get();
         ExternalService externalService = applicationBridgeService.getExternalServiceByPlatformName(conversation.getPlatform());
-        if(externalService==null){
+        if (externalService == null) {
             return ResponseEntity.badRequest().body("Platform service not found");
         }
-        externalService.sendMessage(conversation.getExternalId(),sendMessagePojo.getText());
+        externalService.sendMessage(conversation.getExternalId(), sendMessagePojo.getText());
         return ResponseEntity.ok("Message send successful");
     }
 
     @PostMapping("/endconversationbyid/{id}")
     public ResponseEntity endConversationById(@PathVariable("id") Integer id) {
         Optional<Conversation> optConversation = conversationRepository.findById(id);
-        if(!optConversation.isPresent()){
+        if (optConversation.isEmpty()) {
             return ResponseEntity.badRequest().body("Conversation not found");
-
         }
         Conversation conversation = optConversation.get();
         conversation.setHasEnded(true);
         conversationRepository.save(conversation);
         return ResponseEntity.ok("Conversation ended");
     }
-
-
 
 
 }
