@@ -48,17 +48,10 @@ public class SecurityConfiguration {
                 "/api/v1/auth/**"
         )
           .permitAll()
-
-
-        .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), REPRESENTATIVE.name())
-
-
-        .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), REPRESENTATIVE_READ.name())
-        .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), REPRESENTATIVE_CREATE.name())
-        .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), REPRESENTATIVE_UPDATE.name())
-        .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), REPRESENTATIVE_DELETE.name())
-
-
+            .requestMatchers(GET, "/representative/**").hasAnyAuthority(REPRESENTATIVE_READ.name())
+            .requestMatchers(POST, "/representative/**").hasAnyAuthority(REPRESENTATIVE_CREATE.name())
+            .requestMatchers(PUT, "/representative/**").hasAnyAuthority( REPRESENTATIVE_UPDATE.name())
+            .requestMatchers(DELETE, "/representative/**").hasAnyAuthority( REPRESENTATIVE_DELETE.name())
        /* .requestMatchers("/api/v1/admin/**").hasRole(ADMIN.name())
 
         .requestMatchers(GET, "/api/v1/admin/**").hasAuthority(ADMIN_READ.name())
