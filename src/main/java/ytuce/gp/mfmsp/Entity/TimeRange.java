@@ -2,7 +2,6 @@ package ytuce.gp.mfmsp.Entity;
 
 import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import ytuce.gp.mfmsp.Pojo.TimeRangePojo;
 
 import java.time.LocalDateTime;

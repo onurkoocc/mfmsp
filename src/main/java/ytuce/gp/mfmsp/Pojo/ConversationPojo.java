@@ -1,8 +1,6 @@
 package ytuce.gp.mfmsp.Pojo;
 
-import jakarta.persistence.*;
 import lombok.Data;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
 import ytuce.gp.mfmsp.Constants.Platform;
 import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Entity.Message;
