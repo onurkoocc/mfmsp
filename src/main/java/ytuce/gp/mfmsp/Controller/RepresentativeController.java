@@ -107,13 +107,10 @@ public class RepresentativeController {
         }
         TimeRange timeRange = new TimeRange(timeRangePojo);
         timeRange.setRepresentative(representative);
-        timeRange = timeRangeRepository.save(timeRange);
-        if(timeRange==null){
-            return ResponseEntity.badRequest().body("Time Range cannot created");
-        }
         representative.addTimeRangeToAvailableWorkHours(timeRange);
+        timeRangeRepository.save(timeRange);
         representativeRepository.save(representative);
-        return ResponseEntity.ok(new RepresentativeInformationPojo(representative));
+        return ResponseEntity.ok("ok");
     }
 
     @PostMapping("/sendmessagebyconversationid")

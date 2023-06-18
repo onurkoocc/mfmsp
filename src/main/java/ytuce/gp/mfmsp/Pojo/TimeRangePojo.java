@@ -1,6 +1,5 @@
 package ytuce.gp.mfmsp.Pojo;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 import java.time.LocalDateTime;
