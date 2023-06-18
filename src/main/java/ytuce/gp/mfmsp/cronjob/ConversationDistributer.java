@@ -7,20 +7,17 @@ import org.springframework.stereotype.Component;
 import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Entity.Message;
 import ytuce.gp.mfmsp.Entity.Representative;
-import ytuce.gp.mfmsp.Optaplanner.DistributionService;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
 import ytuce.gp.mfmsp.Repository.RepresentativeRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ApplicationBridgeService;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class ConversationDistributer {
     @Autowired
     ApplicationBridgeService applicationBridgeService;
-
-    @Autowired
-    DistributionService distributionService;
 
     @Autowired
     RepresentativeRepository representativeRepository;

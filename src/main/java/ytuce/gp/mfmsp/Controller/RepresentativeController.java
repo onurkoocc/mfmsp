@@ -10,12 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Entity.Representative;
-import ytuce.gp.mfmsp.Optaplanner.DistributionService;
-import ytuce.gp.mfmsp.Pojo.ConversationPojo;
-import ytuce.gp.mfmsp.Pojo.RepresentativePojo;
-import ytuce.gp.mfmsp.Pojo.SendMessagePojo;
+import ytuce.gp.mfmsp.Entity.TimeRange;
+import ytuce.gp.mfmsp.Pojo.*;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
 import ytuce.gp.mfmsp.Repository.RepresentativeRepository;
+import ytuce.gp.mfmsp.Repository.TimeRangeRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ApplicationBridgeService;
 import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
 
@@ -34,14 +33,13 @@ public class RepresentativeController {
     ApplicationBridgeService applicationBridgeService;
 
     @Autowired
-    DistributionService distributionService;
-
-    @Autowired
     RepresentativeRepository representativeRepository;
 
     @Autowired
     ConversationRepository conversationRepository;
 
+    @Autowired
+    TimeRangeRepository timeRangeRepository;
     /*deprecated
 
     @GetMapping("/run")
@@ -87,6 +85,34 @@ public class RepresentativeController {
         return ResponseEntity.ok(conversationPojos);
     }
 
+
+    @GetMapping("/getrepresentativeinformationbytoken")
+    public ResponseEntity getRepresentativeInformation() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Representative representative = representativeRepository.getByEmail(userDetails.getUsername());
+        if (representative == null) {
+            return ResponseEntity.badRequest().body("Representative not found");
+        }
+        return ResponseEntity.ok(new RepresentativeInformationPojo(representative));
+    }
+
+    @PostMapping("/addtimerangetorepresentative")
+    public ResponseEntity addTimeRangeToRepresentative(
+            @RequestBody TimeRangePojo timeRangePojo
+    ) {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Representative representative = representativeRepository.getByEmail(userDetails.getUsername());
+        if (representative == null) {
+            return ResponseEntity.badRequest().body("Representative not found");
+        }
+        TimeRange timeRange = timeRangeRepository.save(new TimeRange(timeRangePojo));
+        if(timeRange==null){
+            return ResponseEntity.badRequest().body("Time Range cannot created");
+        }
+        representative.addTimeRangeToAvailableWorkHours(timeRange);
+        representativeRepository.save(representative);
+        return ResponseEntity.ok(new RepresentativeInformationPojo(representative));
+    }
 
     @PostMapping("/sendmessagebyconversationid")
     public ResponseEntity sendMessageByConversationId(

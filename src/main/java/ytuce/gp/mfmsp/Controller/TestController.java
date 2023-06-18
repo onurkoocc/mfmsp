@@ -1,7 +1,5 @@
 package ytuce.gp.mfmsp.Controller;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -10,16 +8,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Entity.Representative;
-import ytuce.gp.mfmsp.Optaplanner.DistributionService;
-import ytuce.gp.mfmsp.Optaplanner.RepresentativeDistribution;
 import ytuce.gp.mfmsp.Pojo.ConversationPojo;
 import ytuce.gp.mfmsp.Pojo.RepresentativePojo;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
 import ytuce.gp.mfmsp.Repository.RepresentativeRepository;
-import ytuce.gp.mfmsp.Security.auth.RegisterRequest;
-import ytuce.gp.mfmsp.Security.user.Role;
 import ytuce.gp.mfmsp.Service.ExternalService.ApplicationBridgeService;
 
 import java.util.ArrayList;
@@ -35,9 +28,6 @@ import java.util.List;
 public class TestController {
     @Autowired
     ApplicationBridgeService applicationBridgeService;
-
-    @Autowired
-    DistributionService distributionService;
 
     @Autowired
     RepresentativeRepository representativeRepository;

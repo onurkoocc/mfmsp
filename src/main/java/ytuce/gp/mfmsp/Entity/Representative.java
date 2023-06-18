@@ -16,6 +16,9 @@ public class Representative extends BaseUser {
 
     private Long workload;
 
+    @OneToMany(mappedBy = "representative",  fetch = FetchType.EAGER)
+    private List<TimeRange> availableWorkHours;
+
     public Long getWorkload() {
         this.workload=calculateWorkLoad();
         return workload;
@@ -69,6 +72,21 @@ public class Representative extends BaseUser {
 
     public void setSuccessRate(Integer successRate) {
         this.successRate = successRate;
+    }
+
+    public List<TimeRange> getAvailableWorkHours() {
+        return availableWorkHours;
+    }
+
+    public void setAvailableWorkHours(List<TimeRange> availableWorkHours) {
+        this.availableWorkHours = availableWorkHours;
+    }
+
+    public void addTimeRangeToAvailableWorkHours(TimeRange timeRange) {
+        if(this.availableWorkHours==null){
+            this.availableWorkHours=new ArrayList<>();
+        }
+        availableWorkHours.add(timeRange);
     }
 
     @Override

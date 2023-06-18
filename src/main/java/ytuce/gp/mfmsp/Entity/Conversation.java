@@ -2,23 +2,16 @@ package ytuce.gp.mfmsp.Entity;
 
 import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
-import org.optaplanner.core.api.domain.entity.PlanningEntity;
-import org.optaplanner.core.api.domain.lookup.PlanningId;
-import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import ytuce.gp.mfmsp.Constants.Platform;
-import ytuce.gp.mfmsp.Optaplanner.ConversationDifficultyComparator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
 @Table(name = "conversation")
-@PlanningEntity(difficultyComparatorClass = ConversationDifficultyComparator.class)
 public class Conversation {
     @Id
-    @PlanningId
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String externalId;
@@ -33,7 +26,6 @@ public class Conversation {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "representative_id")
-    @PlanningVariable(valueRangeProviderRefs = "representativeRange")
     private Representative representative;
 
     public Long calculateWorkLoad() {
