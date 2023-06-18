@@ -16,7 +16,7 @@ public class Representative extends BaseUser {
 
     private Long workload;
 
-    @OneToMany(mappedBy = "representative",  fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "representative",  cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TimeRange> availableWorkHours;
 
     public Long getWorkload() {

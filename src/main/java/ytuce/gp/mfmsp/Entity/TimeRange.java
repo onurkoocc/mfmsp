@@ -64,4 +64,12 @@ public class TimeRange {
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime.atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
     }
+
+    public Representative getRepresentative() {
+        return representative;
+    }
+
+    public void setRepresentative(Representative representative) {
+        this.representative = representative;
+    }
 }

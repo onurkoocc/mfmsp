@@ -105,7 +105,9 @@ public class RepresentativeController {
         if (representative == null) {
             return ResponseEntity.badRequest().body("Representative not found");
         }
-        TimeRange timeRange = timeRangeRepository.save(new TimeRange(timeRangePojo));
+        TimeRange timeRange = new TimeRange(timeRangePojo);
+        timeRange.setRepresentative(representative);
+        timeRange = timeRangeRepository.save(timeRange);
         if(timeRange==null){
             return ResponseEntity.badRequest().body("Time Range cannot created");
         }
