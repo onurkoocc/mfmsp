@@ -73,7 +73,7 @@ public class RepresentativeController {
                 RepresentativePojo.entityToPojoBuilder(representative).getConversationList().stream()
                         .filter(c -> !c.getHasEnded())
                         .filter(c -> !c.getMessages().isEmpty())
-                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime(), Comparator.reverseOrder()))
+                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime()))
                         .collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }
@@ -89,7 +89,7 @@ public class RepresentativeController {
                 RepresentativePojo.entityToPojoBuilder(representative).getConversationList().stream()
                         .filter(ConversationPojo::getHasEnded)
                         .filter(c -> !c.getMessages().isEmpty())
-                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime(), Comparator.reverseOrder()))
+                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime()))
                         .collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }
