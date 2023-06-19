@@ -5,18 +5,19 @@ import net.minidev.json.annotate.JsonIgnore;
 import ytuce.gp.mfmsp.Pojo.TimeRangePojo;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
 @Entity
-@Table(name = "timerange")
+@Table(name = "time_range")
 public class TimeRange {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(name = "start_time")
-    private LocalDateTime startTime;
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    private String startTime;
+    @Column(name="end_time")
+    private String endTime;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
@@ -26,18 +27,18 @@ public class TimeRange {
     public TimeRange() {
     }
     public TimeRange(TimeRangePojo timeRangePojo) {
-        this.startTime = timeRangePojo.getStartTime().atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
-        this.endTime = timeRangePojo.getEndTime().atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
+        this.startTime = timeRangePojo.getStartTime();
+        this.endTime = timeRangePojo.getEndTime();
     }
-    public TimeRange(LocalDateTime startTime, LocalDateTime endTime) {
-        this.startTime = startTime.atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
-        this.endTime = endTime.atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
+    public TimeRange(OffsetDateTime startTime, OffsetDateTime endTime) {
+        this.startTime = startTime.toString();
+        this.endTime = endTime.toString();
     }
 
-    public TimeRange(Integer id, LocalDateTime startTime, LocalDateTime endTime) {
+    public TimeRange(Integer id, OffsetDateTime startTime, OffsetDateTime endTime) {
         this.id = id;
-        this.startTime = startTime.atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
-        this.endTime = endTime.atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
+        this.startTime = startTime.toString();
+        this.endTime = endTime.toString();
     }
 
     public Integer getId() {
@@ -48,21 +49,20 @@ public class TimeRange {
         this.id = id;
     }
 
-    public LocalDateTime getStartTime() {
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime.atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
-
-    public LocalDateTime getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime.atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime();
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
     }
 
     public Representative getRepresentative() {
