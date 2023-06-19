@@ -4,6 +4,7 @@ import lombok.Data;
 import ytuce.gp.mfmsp.Entity.Representative;
 import ytuce.gp.mfmsp.Entity.TimeRange;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,8 @@ public class RepresentativeInformationPojo {
         this.availableWorkHours=new ArrayList<>();
         for(TimeRange timeRange:representative.getAvailableWorkHours()){
             TimeRangePojo timeRangePojo = new TimeRangePojo();
-            timeRangePojo.setStartTime(timeRange.getStartTime());
-            timeRangePojo.setEndTime(timeRange.getEndTime());
+            timeRangePojo.setStartTime(timeRange.getStartTime().atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime());
+            timeRangePojo.setEndTime(timeRange.getEndTime().atZone(ZoneId.of("Europe/Istanbul")).toLocalDateTime());
             this.availableWorkHours.add(timeRangePojo);
         }
     }
