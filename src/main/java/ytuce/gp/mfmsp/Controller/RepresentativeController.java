@@ -18,6 +18,7 @@ import ytuce.gp.mfmsp.Repository.TimeRangeRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ApplicationBridgeService;
 import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -68,8 +69,12 @@ public class RepresentativeController {
         if (representative == null) {
             return ResponseEntity.badRequest().body("Representative not found");
         }
-        List<ConversationPojo> conversationPojos = RepresentativePojo.entityToPojoBuilder(representative).getConversationList()
-                .stream().filter(c -> !c.getHasEnded()).collect(Collectors.toList());
+        List<ConversationPojo> conversationPojos =
+                RepresentativePojo.entityToPojoBuilder(representative).getConversationList().stream()
+                        .filter(c -> !c.getHasEnded())
+                        .filter(c -> !c.getMessages().isEmpty())
+                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime(), Comparator.reverseOrder()))
+                        .collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }
 
@@ -80,8 +85,12 @@ public class RepresentativeController {
         if (representative == null) {
             return ResponseEntity.badRequest().body("Representative not found");
         }
-        List<ConversationPojo> conversationPojos = RepresentativePojo.entityToPojoBuilder(representative).getConversationList()
-                .stream().filter(ConversationPojo::getHasEnded).collect(Collectors.toList());
+        List<ConversationPojo> conversationPojos =
+                RepresentativePojo.entityToPojoBuilder(representative).getConversationList().stream()
+                        .filter(ConversationPojo::getHasEnded)
+                        .filter(c -> !c.getMessages().isEmpty())
+                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime(), Comparator.reverseOrder()))
+                        .collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }
 
