@@ -51,6 +51,7 @@ public class InstagramServiceImpl implements ExternalService {
     private AccessTokenRepository accessTokenRepository;
     private static final String pageId = "103158119328523";
 
+    private static final String instagramId = "17841456803916904";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
     /*
     Facebook send message
@@ -76,6 +77,7 @@ public class InstagramServiceImpl implements ExternalService {
                     "&messaging_type=RESPONSE" +
                     "&message=" + URLEncoder.encode(mapper.writeValueAsString(message), StandardCharsets.UTF_8) +
                     "&access_token=" + accessToken;
+            System.out.println(url);
             URL obj = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
@@ -183,7 +185,7 @@ public class InstagramServiceImpl implements ExternalService {
             }
             String mapId = externalConversation.getId();
             int i=0;
-            while(i<externalConversation.getMessages().getData().size() && externalConversation.getMessages().getData().get(i).getFrom().getId().equals(pageId)){
+            while(i<externalConversation.getMessages().getData().size() && externalConversation.getMessages().getData().get(i).getFrom().getId().equals(instagramId)){
                 i++;
             }
             if(i<externalConversation.getMessages().getData().size()){
@@ -216,7 +218,7 @@ public class InstagramServiceImpl implements ExternalService {
             message.setTime(dateTime.toInstant().toEpochMilli());
             message.setText(externalMessage.getMessage());
             message.setExternalId(externalMessage.getId());
-            message.setDirection(externalMessage.getFrom().getId().equals(pageId));
+            message.setDirection(externalMessage.getFrom().getId().equals(instagramId));
 
             conversation.addMessage(message);
         }
