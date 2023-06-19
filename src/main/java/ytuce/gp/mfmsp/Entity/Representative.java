@@ -3,6 +3,9 @@ package ytuce.gp.mfmsp.Entity;
 import jakarta.persistence.*;
 
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +93,15 @@ public class Representative extends BaseUser {
             this.availableWorkHours=new ArrayList<>();
         }
         availableWorkHours.add(timeRange);
+    }
+
+    public boolean isAvailableToWork(){
+        List<TimeRange> timeRanges = getAvailableWorkHours();
+        ZonedDateTime nowTurkeyTime = ZonedDateTime.now(ZoneId.of("Europe/Istanbul"));
+        return timeRanges.stream()
+                .anyMatch(t->nowTurkeyTime.isAfter(ZonedDateTime.of(t.getStartTime(), ZoneId.of("Europe/Istanbul")))
+                &&nowTurkeyTime.isBefore(ZonedDateTime.of(t.getEndTime(), ZoneId.of("Europe/Istanbul"))));
+
     }
 
     @Override
