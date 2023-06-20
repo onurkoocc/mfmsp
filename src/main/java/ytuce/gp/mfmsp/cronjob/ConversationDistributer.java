@@ -86,9 +86,11 @@ public class ConversationDistributer {
                 List<Representative> representativeList = representativeRepository.findAll();
                 representativeList.remove(conversation.getRepresentative());
                 Integer selectedRepresentativeId=selectLeastWorkedRepresentative(representativeList);
-                Representative newRepresentative = representativeRepository.getReferenceById(selectedRepresentativeId);
-                conversation.setRepresentative(newRepresentative);
-                conversationRepository.save(conversation);
+                if(selectedRepresentativeId!=null){
+                    Representative newRepresentative = representativeRepository.getReferenceById(selectedRepresentativeId);
+                    conversation.setRepresentative(newRepresentative);
+                    conversationRepository.save(conversation);
+                }
             }
         }
         long end=System.currentTimeMillis();
