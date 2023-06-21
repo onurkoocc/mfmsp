@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
 import ytuce.gp.mfmsp.Pojo.TimeRangePojo;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 
 @Entity
 @Table(name = "time_range")
@@ -16,7 +14,7 @@ public class TimeRange {
     private Integer id;
     @Column(name = "start_time")
     private String startTime;
-    @Column(name="end_time")
+    @Column(name = "end_time")
     private String endTime;
 
     @JsonIgnore
@@ -26,10 +24,12 @@ public class TimeRange {
 
     public TimeRange() {
     }
+
     public TimeRange(TimeRangePojo timeRangePojo) {
         this.startTime = timeRangePojo.getStartTime();
         this.endTime = timeRangePojo.getEndTime();
     }
+
     public TimeRange(OffsetDateTime startTime, OffsetDateTime endTime) {
         this.startTime = startTime.toString();
         this.endTime = endTime.toString();

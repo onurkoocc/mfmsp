@@ -1,4 +1,5 @@
 package ytuce.gp.mfmsp.Entity;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import net.minidev.json.annotate.JsonIgnore;
@@ -7,7 +8,7 @@ import org.glassfish.grizzly.http.server.util.StringParser;
 import java.util.Objects;
 
 @Entity
-@Table(name="message")
+@Table(name = "message")
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +25,10 @@ public class Message {
     @JoinColumn(name = "conversation_id")
     private Conversation conversation;
 
-    public Long calculateWorkLoad(){
+    public Long calculateWorkLoad() {
         String[] words = text.split(" ");
-        if(direction) {
-            return (long)words.length * 2L;
+        if (direction) {
+            return (long) words.length * 2L;
         }
         return (long) words.length;
     }
@@ -88,6 +89,7 @@ public class Message {
             conversation.getMessages().add(this);
         }
     }
+
     public String getText() {
         return text;
     }
@@ -105,7 +107,7 @@ public class Message {
                 ", time=" + time +
                 ", direction=" + direction +
                 ", readStatus=" + readStatus +
-                ", conversation=" +(conversation!=null?conversation.getId().toString():"null") +
+                ", conversation=" + (conversation != null ? conversation.getId().toString() : "null") +
                 '}';
     }
 

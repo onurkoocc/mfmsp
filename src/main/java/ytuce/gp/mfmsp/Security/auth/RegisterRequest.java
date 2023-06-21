@@ -13,9 +13,9 @@ import ytuce.gp.mfmsp.Security.user.Role;
 @NoArgsConstructor
 public class RegisterRequest {
 
-  private String firstname;
-  private String lastname;
-  private String email;
-  private String password;
-  private Role role;
+    private String firstname;
+    private String lastname;
+    private String email;
+    private String password;
+    private Role role;
 }

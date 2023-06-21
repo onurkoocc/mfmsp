@@ -4,7 +4,6 @@ public class SendMessagePojo {
     private Integer id;
     private String text;
 
-    // Getters and setters
     public Integer getId() {
         return id;
     }

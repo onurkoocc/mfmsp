@@ -17,5 +17,4 @@ public class AccessToken {
 
     private String value;
 
-    // getters and setters
 }

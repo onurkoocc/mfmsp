@@ -7,6 +7,7 @@ import ytuce.gp.mfmsp.Entity.Message;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
 public class ConversationPojo {
     private Integer id;
@@ -18,8 +19,8 @@ public class ConversationPojo {
     private Integer satisfactionRate;
     private Integer duration;
 
-    public static ConversationPojo entityToPojoBuilder(Conversation conversation){
-        if(conversation==null){
+    public static ConversationPojo entityToPojoBuilder(Conversation conversation) {
+        if (conversation == null) {
             return null;
         }
         ConversationPojo conversationPojo = new ConversationPojo();
@@ -31,8 +32,8 @@ public class ConversationPojo {
         conversationPojo.setSatisfactionRate(conversation.getSatisfactionRate());
         conversationPojo.setDuration(conversationPojo.getDuration());
         List<MessagePojo> messagePojos = new ArrayList<>();
-        if(conversation.getMessages()!=null){
-            for(Message message:conversation.getMessages()){
+        if (conversation.getMessages() != null) {
+            for (Message message : conversation.getMessages()) {
                 messagePojos.add(MessagePojo.entityToPojoBuilder(message));
             }
         }

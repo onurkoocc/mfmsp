@@ -24,6 +24,7 @@ public class ConversationDistributer {
 
     @Autowired
     ConversationRepository conversationRepository;
+
     @Transactional
     @Scheduled(cron = "0 */2 * * * ?")
     public void distribute() {
@@ -32,11 +33,11 @@ public class ConversationDistributer {
         applicationBridgeService.getAllConversations();
         List<Conversation> conversationList = conversationRepository.getAllByRepresentativeIsNull();
 
-    //
+        //
         for (Conversation conversation : conversationList) {
             List<Representative> representativeList = representativeRepository.findAll();
             Integer selectedRepresentativeId = selectLeastWorkedRepresentative(representativeList);
-            if(selectedRepresentativeId!=null){
+            if (selectedRepresentativeId != null) {
                 Representative selectedRepresentative = representativeRepository.getReferenceById(selectedRepresentativeId);
                 selectedRepresentative.addConversation(conversation);
                 conversation.setRepresentative(selectedRepresentative);
@@ -45,11 +46,11 @@ public class ConversationDistributer {
                 representativeRepository.save(selectedRepresentative);
             }
         }
-        long end=System.currentTimeMillis();
-        System.out.println("Distribution Duration" + (end-start));
+        long end = System.currentTimeMillis();
+        System.out.println("Distribution Duration" + (end - start));
     }
 
-    private Integer selectLeastWorkedRepresentative(List<Representative> representativeList){
+    private Integer selectLeastWorkedRepresentative(List<Representative> representativeList) {
         HashMap<Integer, Long> representativeToWorkloadHashMap = new HashMap<>();
         for (Representative representative : representativeList) {
             if (!representativeToWorkloadHashMap.containsKey(representative.getId())) {
@@ -59,54 +60,54 @@ public class ConversationDistributer {
         }
         long minimumWorkload = Long.MAX_VALUE;
         Integer selectedRepresentativeId = null;
-        for(Integer i:representativeToWorkloadHashMap.keySet()){
+        for (Integer i : representativeToWorkloadHashMap.keySet()) {
             Representative representative = representativeRepository.getReferenceById(i);
-            if(minimumWorkload>representativeToWorkloadHashMap.get(i) && representative.isAvailableToWork()){
-                minimumWorkload=representativeToWorkloadHashMap.get(i);
+            if (minimumWorkload > representativeToWorkloadHashMap.get(i) && representative.isAvailableToWork()) {
+                minimumWorkload = representativeToWorkloadHashMap.get(i);
                 selectedRepresentativeId = i;
             }
         }
         return selectedRepresentativeId;
     }
+
     @Transactional
     @Scheduled(cron = "0 */5 * * * ?")
     public void reassign() {
         long start = System.currentTimeMillis();
         List<Conversation> conversations = conversationRepository.getAllByHasEndedFalseOrHasEndedNull();
-        for(Conversation conversation:conversations){
-            if(conversation==null){
+        for (Conversation conversation : conversations) {
+            if (conversation == null) {
                 continue;
             }
-            if(conversation.getMessages()==null || conversation.getMessages().isEmpty()){
+            if (conversation.getMessages() == null || conversation.getMessages().isEmpty()) {
                 continue;
             }
-            Message lastMessage = conversation.getMessages().get(conversation.getMessages().size()-1);
-            if(!lastMessage.getDirection()&&(System.currentTimeMillis()-lastMessage.getTime())>1000*60*30){
-                //conversation.getRepresentative().getConversationList().remove(conversation);
+            Message lastMessage = conversation.getMessages().get(conversation.getMessages().size() - 1);
+            if (!lastMessage.getDirection() && (System.currentTimeMillis() - lastMessage.getTime()) > 1000 * 60 * 30) {
                 List<Representative> representativeList = representativeRepository.findAll();
                 representativeList.remove(conversation.getRepresentative());
-                Integer selectedRepresentativeId=selectLeastWorkedRepresentative(representativeList);
-                if(selectedRepresentativeId!=null){
+                Integer selectedRepresentativeId = selectLeastWorkedRepresentative(representativeList);
+                if (selectedRepresentativeId != null) {
                     Representative newRepresentative = representativeRepository.getReferenceById(selectedRepresentativeId);
                     conversation.setRepresentative(newRepresentative);
                     conversationRepository.save(conversation);
                 }
             }
         }
-        long end=System.currentTimeMillis();
-        System.out.println("Reassign Duration : "+ (end-start));
+        long end = System.currentTimeMillis();
+        System.out.println("Reassign Duration : " + (end - start));
     }
 
     @Transactional
     @Scheduled(cron = "0/10 * * * * ?")
     public void workloadUpdater() {
         long start = System.currentTimeMillis();
-        System.out.println("Workload Updater Start : "+start);
+        System.out.println("Workload Updater Start : " + start);
         List<Representative> representatives = representativeRepository.findAll();
         representatives.forEach(Representative::getWorkload);
         representativeRepository.saveAll(representatives);
-        long end=System.currentTimeMillis();
-        System.out.println("Workload Updater Duration : "+ (end-start));
+        long end = System.currentTimeMillis();
+        System.out.println("Workload Updater Duration : " + (end - start));
     }
 
 }

@@ -29,26 +29,27 @@ public class Conversation {
     private Representative representative;
 
     public Long calculateWorkLoad() {
-        if(messages==null){
-            messages=new ArrayList<>();
+        if (messages == null) {
+            messages = new ArrayList<>();
             return 0L;
         }
         //3000 -> dakika sayısı*2 katsayı
-        long duration = (messages.get(messages.size()-1).getTime()-messages.get(0).getTime())/30000L;
-        return messages.stream().mapToLong(Message::calculateWorkLoad).sum()+messages.size()+duration;
+        long duration = (messages.get(messages.size() - 1).getTime() - messages.get(0).getTime()) / 30000L;
+        return messages.stream().mapToLong(Message::calculateWorkLoad).sum() + messages.size() + duration;
     }
+
     public int getMessageCount() {
-        if(messages==null){
-            messages=new ArrayList<>();
+        if (messages == null) {
+            messages = new ArrayList<>();
         }
         return messages.size();
     }
 
     public void addMessage(Message message) {
-        if(this.messages==null){
-            this.messages=new ArrayList<>();
+        if (this.messages == null) {
+            this.messages = new ArrayList<>();
         }
-        if(!this.messages.contains(message)){
+        if (!this.messages.contains(message)) {
             this.messages.add(message);
             message.setConversation(this);
         }
@@ -100,7 +101,7 @@ public class Conversation {
     }
 
     public List<Message> getMessages() {
-        if(messages==null){
+        if (messages == null) {
             return new ArrayList<>();
         }
         return messages;
@@ -145,7 +146,7 @@ public class Conversation {
                 ", hasEnded=" + hasEnded +
                 ", satisfactionRate=" + satisfactionRate +
                 ", duration=" + duration +
-                ", representative=" + (representative!=null?representative.getId().toString():"null")+
+                ", representative=" + (representative != null ? representative.getId().toString() : "null") +
                 '}';
     }
 

@@ -1,2 +1,0 @@
-
-103158119328523/messages?recipient={'id':'5688324121263882'}&messaging_type=RESPONSE&message={'text':'deneme1*2*3'}

@@ -11,9 +11,11 @@ import java.util.List;
 @Repository
 public interface ConversationRepository extends JpaRepository<Conversation, Integer> {
     Boolean existsByExternalId(String externalId);
+
     Conversation getConversationByExternalId(String externalId);
 
     Conversation getConversationByExternalIdAndPlatform(String externalId, Platform platform);
+
     List<Conversation> getConversationsByPlatform(Platform platform);
 
     List<Conversation> getAllByRepresentativeIsNotNull();

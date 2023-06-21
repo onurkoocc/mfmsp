@@ -6,6 +6,7 @@ import ytuce.gp.mfmsp.Entity.Representative;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Data
 public class RepresentativePojo {
     private Integer id;
@@ -17,8 +18,8 @@ public class RepresentativePojo {
 
     private Long workload;
 
-    public static RepresentativePojo entityToPojoBuilder(Representative representative){
-        if(representative==null){
+    public static RepresentativePojo entityToPojoBuilder(Representative representative) {
+        if (representative == null) {
             return null;
         }
         RepresentativePojo representativePojo = new RepresentativePojo();
@@ -29,8 +30,8 @@ public class RepresentativePojo {
         representativePojo.setSuccessRate(representative.getSuccessRate());
         representativePojo.setWorkload(representative.getWorkload());
         List<ConversationPojo> conversationPojos = new ArrayList<>();
-        if(representative.getConversationList()!=null){
-            for(Conversation conversation:representative.getConversationList()){
+        if (representative.getConversationList() != null) {
+            for (Conversation conversation : representative.getConversationList()) {
                 conversationPojos.add(ConversationPojo.entityToPojoBuilder(conversation));
             }
         }

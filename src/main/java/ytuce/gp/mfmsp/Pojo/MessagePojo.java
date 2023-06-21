@@ -12,8 +12,8 @@ public class MessagePojo {
     private Boolean direction;
     private Boolean readStatus;
 
-    public static MessagePojo entityToPojoBuilder(Message message){
-        if(message==null){
+    public static MessagePojo entityToPojoBuilder(Message message) {
+        if (message == null) {
             return null;
         }
         MessagePojo messagePojo = new MessagePojo();

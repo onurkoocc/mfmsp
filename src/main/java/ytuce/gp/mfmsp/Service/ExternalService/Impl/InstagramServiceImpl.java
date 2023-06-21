@@ -4,15 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ytuce.gp.mfmsp.Constants.AccessTokenName;
 import ytuce.gp.mfmsp.Constants.Platform;
-import ytuce.gp.mfmsp.Entity.Conversation;
 import ytuce.gp.mfmsp.Repository.AccessTokenRepository;
 import ytuce.gp.mfmsp.Repository.ConversationRepository;
-import ytuce.gp.mfmsp.Repository.MessageRepository;
 import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
 
 import java.io.BufferedReader;
@@ -24,28 +21,18 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Log4j2
 @AllArgsConstructor
 public class InstagramServiceImpl implements ExternalService {
-    /*
-    //send message
-    curl -i -X POST \
- "https://graph.facebook.com/v15.0/103158119328523/messages?recipient=%7B%0A%20%20%22id%22%3A%20%225947252048655592%22%0A%7D&messaging_type=RESPONSE&message=%7B%0A%20%20%22text%22%3A%20%22Hello%20HELLO%2C%20world%20WORLD!%22%0A%7D&access_token=EAAwXkaAKP3oBAPhmGvtLyQallFWdUVhXLy8D5YPANunAFkQBj9v9D4eeEdquoXBIV0TT2m5zrmKsUBWrrX4JTzWfx2RXEJdE4AyiTBte8Aqk9fACLyKvJfKHu8Uxk1wb3YvyGfUXs1mbDyjaLfrSTi4VYEknd00IuMS9XYVUSR2UyTW1Dll8ZBrE6DBi2fZAvUByaLsqqnJgZBYTlvpiMSZCQfjJeL4ZD"
-     */
-    /*
-    //reveive instagram messages
-    curl -i -X GET \
- "https://graph.facebook.com/v15.0/103158119328523/conversations?fields=messages%7Bmessage%2Cid%2Cto%2Cfrom%2Ccreated_time%7D&platform=INSTAGRAM&access_token=EAAwXkaAKP3oBAOkRhd3BOrc3opXxruhonB2AHmwZAeCvmRZCGkJd56QjiMLgDcpaBi5PHRuhkrHHsp2x8w1mZCVoZBVUPlEZBabY9G0NIsytb9TTt5eBmk2aIqDMZBiEEVNBCcNUiqs07gGX3a1ymL5zkm4O4dV7XU5AvRmXNTaCpayZAj35jeFOW8nn8dzqQVbkZBZADySpyQGHQwtmJN6e2z1jRUwWdUhcZD"
-     */
 
     @Autowired
     private ConversationRepository conversationRepository;
-
-    @Autowired
-    private MessageRepository messageRepository;
 
     @Autowired
     private AccessTokenRepository accessTokenRepository;
@@ -53,16 +40,11 @@ public class InstagramServiceImpl implements ExternalService {
 
     private static final String instagramId = "17841456803916904";
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
-    /*
-    Facebook send message
-    curl -i -X POST \
- "https://graph.facebook.com/v15.0/103158119328523/messages?recipient=%7B%0A%20%20%22id%22%3A%20%225688324121263882%22%0A%7D&messaging_type=RESPONSE&message=%7B%0A%20%20%22text%22%3A%20%22Hello%20HELLO%2C%20world%20WORLD!%22%0A%7D&access_token=EAAwXkaAKP3oBAPhmGvtLyQallFWdUVhXLy8D5YPANunAFkQBj9v9D4eeEdquoXBIV0TT2m5zrmKsUBWrrX4JTzWfx2RXEJdE4AyiTBte8Aqk9fACLyKvJfKHu8Uxk1wb3YvyGfUXs1mbDyjaLfrSTi4VYEknd00IuMS9XYVUSR2UyTW1Dll8ZBrE6DBi2fZAvUByaLsqqnJgZBYTlvpiMSZCQfjJeL4ZD"
-     */
 
     public void sendMessage(String recipientId, String messageText) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            // Create the JSON objects for the payload
+
             Map<String, String> recipient = new HashMap<>();
             recipient.put("id", recipientId);
 
@@ -71,7 +53,7 @@ public class InstagramServiceImpl implements ExternalService {
 
             String accessToken = accessTokenRepository.getByName(AccessTokenName.META_ACCESS_TOKEN.name()).getValue();
 
-            // Create the URL for the request
+
             String url = "https://graph.facebook.com/v15.0/103158119328523/messages?" +
                     "recipient=" + URLEncoder.encode(mapper.writeValueAsString(recipient), StandardCharsets.UTF_8) +
                     "&messaging_type=RESPONSE" +
@@ -81,21 +63,21 @@ public class InstagramServiceImpl implements ExternalService {
             URL obj = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
-            // Set the request method (POST), content type, and enable input/output
+
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setDoOutput(true);
 
-            // Send the POST request
+
             OutputStream os = conn.getOutputStream();
             os.write(url.getBytes(StandardCharsets.UTF_8));
             os.close();
 
-            // Print the response code/message for debugging
+
             System.out.println("Response Code : " + conn.getResponseCode());
             System.out.println("Response Message : " + conn.getResponseMessage());
 
-            // If the request was not successful, print the error message
+
             if (conn.getResponseCode() != 200) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
                 String output;
@@ -111,18 +93,12 @@ public class InstagramServiceImpl implements ExternalService {
         }
     }
 
-    /*
-    //Facebook get messages
-    curl -i -X GET \
- "https://graph.facebook.com/v15.0/103158119328523/conversations?fields=messages%7Bmessage%2Cid%2Cto%2Cfrom%2Ccreated_time%7D&platform=MESSENGER&access_token=EAAwXkaAKP3oBAOkRhd3BOrc3opXxruhonB2AHmwZAeCvmRZCGkJd56QjiMLgDcpaBi5PHRuhkrHHsp2x8w1mZCVoZBVUPlEZBabY9G0NIsytb9TTt5eBmk2aIqDMZBiEEVNBCcNUiqs07gGX3a1ymL5zkm4O4dV7XU5AvRmXNTaCpayZAj35jeFOW8nn8dzqQVbkZBZADySpyQGHQwtmJN6e2z1jRUwWdUhcZD"
-     */
-    //@Autowired
 
     public void receiveMessages() {
         try {
             String accessToken = accessTokenRepository.getByName(AccessTokenName.META_ACCESS_TOKEN.name()).getValue();
 
-            // Create the URL for the request
+
             String url = "https://graph.facebook.com/v15.0/103158119328523/conversations?" +
                     "fields=messages%7Bmessage%2Cid%2Cto%2Cfrom%2Ccreated_time%7D" +
                     "&platform=INSTAGRAM" +
@@ -131,14 +107,14 @@ public class InstagramServiceImpl implements ExternalService {
             URL obj = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) obj.openConnection();
 
-            // Set the request method (GET)
+
             conn.setRequestMethod("GET");
 
-            // Print the response code/message for debugging
+
             System.out.println("Response Code : " + conn.getResponseCode());
             System.out.println("Response Message : " + conn.getResponseMessage());
 
-            // If the request was not successful, print the error message
+
             if (conn.getResponseCode() != 200) {
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
                 String output;
@@ -146,7 +122,7 @@ public class InstagramServiceImpl implements ExternalService {
                 while ((output = br.readLine()) != null) {
                     System.out.println(output);
                 }
-            } else { // If the request was successful, print the response
+            } else {
                 BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
                 StringBuilder result = new StringBuilder();
                 String output;
@@ -184,11 +160,11 @@ public class InstagramServiceImpl implements ExternalService {
                 continue;
             }
             String mapId = externalConversation.getId();
-            int i=0;
-            while(i<externalConversation.getMessages().getData().size() && externalConversation.getMessages().getData().get(i).getFrom().getId().equals(instagramId)){
+            int i = 0;
+            while (i < externalConversation.getMessages().getData().size() && externalConversation.getMessages().getData().get(i).getFrom().getId().equals(instagramId)) {
                 i++;
             }
-            if(i<externalConversation.getMessages().getData().size()){
+            if (i < externalConversation.getMessages().getData().size()) {
                 mapId = externalConversation.getMessages().getData().get(i).getFrom().getId();
             }
             ytuce.gp.mfmsp.Entity.Conversation conversation = conversationMap.get(mapId);
@@ -205,7 +181,6 @@ public class InstagramServiceImpl implements ExternalService {
         for (ytuce.gp.mfmsp.Entity.Conversation conversation : conversationMap.values()) {
             List<ytuce.gp.mfmsp.Entity.Message> messageList = conversation.getMessages();
             messageList.sort(Comparator.comparing(ytuce.gp.mfmsp.Entity.Message::getTime));
-            // The replace operation is not needed here as we're manipulating the same conversation object.
         }
 
         return conversationRepository.saveAll(conversationMap.values());
@@ -223,101 +198,6 @@ public class InstagramServiceImpl implements ExternalService {
             conversation.addMessage(message);
         }
     }
-
-/*
-    private void conversationMapper(InstagramServiceImpl.Root root){
-        if(root == null || root.getData() == null || root.getData().isEmpty()){
-            return;
-        }
-
-        for(InstagramServiceImpl.Conversation externalConversation : root.getData()){
-            if(externalConversation == null){
-                continue;
-            }
-            handleConversation(externalConversation);
-        }
-    }
-
-    private void handleConversation(InstagramServiceImpl.Conversation externalConversation) {
-        ytuce.gp.mfmsp.Entity.Conversation conversation = null;
-
-        if( conversationRepository.existsByExternalId(externalConversation.getId()) ) {
-            conversation = conversationRepository.getConversationByExternalId(externalConversation.getId());
-        }
-
-        if(conversation == null) {
-            conversation = new ytuce.gp.mfmsp.Entity.Conversation();
-            conversation.setPlatform(Platform.INSTAGRAM);
-        }
-
-        setConversationMessages(externalConversation, conversation);
-
-        if(!conversationRepository.existsByExternalId(externalConversation.getId())) {
-            conversationRepository.save(conversation);
-        }
-    }
-
-    private void setConversationMessages(InstagramServiceImpl.Conversation externalConversation, ytuce.gp.mfmsp.Entity.Conversation conversation) {
-        if (externalConversation.getMessages() == null || externalConversation.getMessages().getData() == null) {
-            conversation.setMessages(null); // Is it better to set null or empty array?
-            return;
-        }
-
-        if (conversation.getMessages() == null) {
-            conversation.setMessages(createMessages(externalConversation.getMessages().getData()));
-            return;
-        }
-        if(externalConversation.getMessages().getData().size() != conversation.getMessages().size()){
-            conversation.setMessages(copyExternalMessagesToMessages(externalConversation.getMessages().getData(),conversation.getMessages()));
-        }
-    }
-
-    private List<ytuce.gp.mfmsp.Entity.Message> copyExternalMessagesToMessages(List<InstagramServiceImpl.Message> externalMessages, List<ytuce.gp.mfmsp.Entity.Message> messages){
-        if(externalMessages.size()>messages.size()){
-            for(int i=messages.size();i<externalMessages.size();i++){
-                messages.add(setMessageFromExternalMessage(externalMessages.get(i)));
-            }
-        }else if(externalMessages.size()<messages.size()){
-            for(int i=messages.size()-1;i>=externalMessages.size();i--){
-                ytuce.gp.mfmsp.Entity.Message message = messages.get(i);
-                messages.remove(i);
-                messageRepository.delete(message);
-            }
-        }
-        return messages;
-    }
-
-    private List<ytuce.gp.mfmsp.Entity.Message> createMessages(List<InstagramServiceImpl.Message> externalMessages){
-        List<ytuce.gp.mfmsp.Entity.Message> messages = new ArrayList<>();
-        for(InstagramServiceImpl.Message externalMessage : externalMessages){
-            if(externalMessage == null){
-                continue;
-            }
-            messages.add(setMessageFromExternalMessage(externalMessage));
-        }
-
-        return messages;
-    }
-
-    private ytuce.gp.mfmsp.Entity.Message setMessageFromExternalMessage(InstagramServiceImpl.Message externalMessage){
-        ytuce.gp.mfmsp.Entity.Message message = new ytuce.gp.mfmsp.Entity.Message();
-        message.setExternalId(externalMessage.getId());
-        message.setText(externalMessage.getMessage());
-
-        if(externalMessage.getFrom()!=null && externalMessage.getFrom().getId()!=null){
-            message.setDirection(externalMessage.getFrom().getId().equals(pageId));
-        }else{
-            message.setDirection(null); // Review if this part is suitable
-        }
-
-        ZonedDateTime dateTime = ZonedDateTime.parse(externalMessage.getCreated_time(), formatter);
-        message.setTime(dateTime.toInstant().toEpochMilli());
-        return message;
-    }
-    
- */
-
-
 
     private class Conversation {
         String id;

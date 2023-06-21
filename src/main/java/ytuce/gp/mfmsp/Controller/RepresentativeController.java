@@ -41,25 +41,6 @@ public class RepresentativeController {
 
     @Autowired
     TimeRangeRepository timeRangeRepository;
-    /*deprecated
-
-    @GetMapping("/run")
-    public ResponseEntity getById() {
-
-        applicationBridgeService.getAllConversations();
-        List<Conversation> conversationList = conversationRepository.findAll();
-        List<Conversation> tmpConversationList = new ArrayList<>();
-        RepresentativeDistribution solvedDistribution = new RepresentativeDistribution();
-        for(Conversation conversation:conversationList){
-            tmpConversationList.add(conversation);
-            solvedDistribution = distributionService.distribute(representativeRepository.findAll(),tmpConversationList);
-        }
-
-        representativeRepository.saveAll(solvedDistribution.getRepresentativeList());
-        conversationRepository.saveAll(solvedDistribution.getConversationList());
-        return ResponseEntity.ok("distribution completed");
-    }
-     */
 
 
     @GetMapping("/getallconversationsoftherepresentative")
@@ -73,7 +54,7 @@ public class RepresentativeController {
                 RepresentativePojo.entityToPojoBuilder(representative).getConversationList().stream()
                         .filter(c -> !c.getHasEnded())
                         .filter(c -> !c.getMessages().isEmpty())
-                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime()))
+                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size() - 1).getTime()))
                         .collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }
@@ -89,7 +70,7 @@ public class RepresentativeController {
                 RepresentativePojo.entityToPojoBuilder(representative).getConversationList().stream()
                         .filter(ConversationPojo::getHasEnded)
                         .filter(c -> !c.getMessages().isEmpty())
-                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size()-1).getTime()))
+                        .sorted(Comparator.comparing(c -> c.getMessages().get(c.getMessages().size() - 1).getTime()))
                         .collect(Collectors.toList());
         return ResponseEntity.ok(conversationPojos);
     }

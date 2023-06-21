@@ -12,7 +12,6 @@ import ytuce.gp.mfmsp.Service.ExternalService.ExternalService;
 import java.util.List;
 
 
-
 @Service
 @Log4j2
 @AllArgsConstructor
@@ -33,15 +32,15 @@ public class ApplicationBridgeServiceImpl implements ApplicationBridgeService {
     private TelegramServiceImpl telegramService;
 
     @Transactional
-    public void getAllConversations(){
+    public void getAllConversations() {
         externalServices.forEach(ExternalService::receiveMessages);
     }
 
-    public List<ExternalService>  getAllExternalServices(){
+    public List<ExternalService> getAllExternalServices() {
         return externalServices;
     }
 
-    public ExternalService getExternalServiceByPlatformName(Platform platform){
+    public ExternalService getExternalServiceByPlatformName(Platform platform) {
         ExternalService externalService = null;
         switch (platform) {
             case FACEBOOK:

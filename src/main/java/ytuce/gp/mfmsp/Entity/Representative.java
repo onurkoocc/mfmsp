@@ -2,11 +2,8 @@ package ytuce.gp.mfmsp.Entity;
 
 import jakarta.persistence.*;
 
-
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,16 +21,17 @@ public class Representative extends BaseUser {
     private List<TimeRange> availableWorkHours;
 
     public Long getWorkload() {
-        this.workload=calculateWorkLoad();
+        this.workload = calculateWorkLoad();
         return workload;
     }
 
-    private Long calculateWorkLoad(){
-        if(conversationList == null){
-            conversationList=new ArrayList<>();
+    private Long calculateWorkLoad() {
+        if (conversationList == null) {
+            conversationList = new ArrayList<>();
         }
-        return conversationList.stream().mapToLong(Conversation::calculateWorkLoad).sum()+conversationList.size()* 3L;
+        return conversationList.stream().mapToLong(Conversation::calculateWorkLoad).sum() + conversationList.size() * 3L;
     }
+
     private void setWorkload(Long workload) {
         this.workload = workload;
     }
@@ -46,21 +44,22 @@ public class Representative extends BaseUser {
     }
 
     public void addConversation(Conversation conversation) {
-        if(this.conversationList==null){
-            this.conversationList=new ArrayList<>();
+        if (this.conversationList == null) {
+            this.conversationList = new ArrayList<>();
         }
-        if(!this.conversationList.contains(conversation)){
+        if (!this.conversationList.contains(conversation)) {
             this.conversationList.add(conversation);
             conversation.setRepresentative(this);
         }
     }
+
     public void removeConversation(Conversation conversation) {
         conversationList.remove(conversation);
         conversation.setRepresentative(null);
     }
 
     public List<Conversation> getConversationList() {
-        if(conversationList==null){
+        if (conversationList == null) {
             conversationList = new ArrayList<>();
         }
         return conversationList;
@@ -79,7 +78,7 @@ public class Representative extends BaseUser {
     }
 
     public List<TimeRange> getAvailableWorkHours() {
-        if(this.availableWorkHours==null){
+        if (this.availableWorkHours == null) {
             this.availableWorkHours = new ArrayList<>();
         }
         return availableWorkHours;
@@ -90,18 +89,18 @@ public class Representative extends BaseUser {
     }
 
     public void addTimeRangeToAvailableWorkHours(TimeRange timeRange) {
-        if(this.availableWorkHours==null){
-            this.availableWorkHours=new ArrayList<>();
+        if (this.availableWorkHours == null) {
+            this.availableWorkHours = new ArrayList<>();
         }
         availableWorkHours.add(timeRange);
     }
 
-    public boolean isAvailableToWork(){
+    public boolean isAvailableToWork() {
         List<TimeRange> timeRanges = getAvailableWorkHours();
         OffsetDateTime nowTurkeyTime = OffsetDateTime.now(ZoneId.of("Europe/Istanbul"));
         return timeRanges.stream()
-                .anyMatch(t->nowTurkeyTime.isAfter(OffsetDateTime.parse(t.getStartTime()))
-                &&nowTurkeyTime.isBefore(OffsetDateTime.parse(t.getEndTime())));
+                .anyMatch(t -> nowTurkeyTime.isAfter(OffsetDateTime.parse(t.getStartTime()))
+                        && nowTurkeyTime.isBefore(OffsetDateTime.parse(t.getEndTime())));
 
     }
 

@@ -13,9 +13,7 @@ public enum Permission {
     REPRESENTATIVE_READ("representative:read"),
     REPRESENTATIVE_UPDATE("representative:update"),
     REPRESENTATIVE_CREATE("representative:create"),
-    REPRESENTATIVE_DELETE("representative:delete")
-
-    ;
+    REPRESENTATIVE_DELETE("representative:delete");
 
     @Getter
     private final String permission;

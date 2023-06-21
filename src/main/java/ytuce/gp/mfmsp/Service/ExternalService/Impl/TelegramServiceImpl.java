@@ -34,7 +34,7 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
 
     @Override
     public void onUpdateReceived(Update update) {
-        // Handle incoming messages or events from Telegram API
+
     }
 
     public void sendMessage(String chatId, String text) {
@@ -43,8 +43,8 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
         sendMessage.setText(text);
 
         Conversation conversation = conversationRepository.getConversationByExternalIdAndPlatform(chatId, Platform.TELEGRAM);
-        if(conversation==null){
-            conversation=new Conversation();
+        if (conversation == null) {
+            conversation = new Conversation();
             conversation.setPlatform(Platform.TELEGRAM);
             conversation.setExternalId(chatId);
             List<Message> messages = new ArrayList<>();
@@ -61,25 +61,25 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
         try {
             execute(sendMessage);
         } catch (Exception e) {
-            // Handle exception
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
     }
 
     public void receiveMessages() {
         GetUpdates request = new GetUpdates();
-        request.setLimit(100); // adjust the limit as per your requirement
+        request.setLimit(100);
         request.setOffset(0);
         List<Conversation> conversations = conversationRepository.getConversationsByPlatform(Platform.TELEGRAM);
-        HashMap<Long,Conversation> conversationHashMap = new HashMap<>();
-        for(Conversation conversation : conversations){
-            conversationHashMap.put(Long.valueOf(conversation.getExternalId()),conversation);
+        HashMap<Long, Conversation> conversationHashMap = new HashMap<>();
+        for (Conversation conversation : conversations) {
+            conversationHashMap.put(Long.valueOf(conversation.getExternalId()), conversation);
         }
 
         try {
             List<Update> updates = execute(request);
             for (Update update : updates) {
                 Conversation conversation = conversationHashMap.get(update.getMessage().getChatId());
-                if(conversation==null){
+                if (conversation == null) {
                     conversation = new Conversation();
                     conversation.setPlatform(Platform.TELEGRAM);
                     conversation.setExternalId(String.valueOf(update.getMessage().getChatId()));
@@ -87,18 +87,18 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
                     conversation.setHasEnded(false);
                 }
                 Message message = new Message();
-                message.setTime(Long.valueOf(update.getMessage().getDate())*1000);
+                message.setTime(Long.valueOf(update.getMessage().getDate()) * 1000);
                 message.setText(update.getMessage().getText());
                 message.setDirection(false);
                 message.setExternalId(String.valueOf(update.getMessage().getMessageId()));
                 message.setReadStatus(false);
-                if(!conversation.getMessages().contains(message)){
+                if (!conversation.getMessages().contains(message)) {
                     conversation.addMessage(message);
                 }
-                conversationHashMap.put(update.getMessage().getChatId(),conversation);
+                conversationHashMap.put(update.getMessage().getChatId(), conversation);
             }
             List<Conversation> conversationList = conversationHashMap.values().stream().toList();
-            for(Conversation conversation:conversationList){
+            for (Conversation conversation : conversationList) {
                 conversation.getMessages().sort(Comparator.comparing(Message::getTime));
             }
             conversationRepository.saveAll(conversationList);
@@ -110,13 +110,11 @@ public class TelegramServiceImpl extends TelegramLongPollingBot implements Exter
 
     @Override
     public String getBotToken() {
-        // Return the bot token provided by Telegram API
         return accessTokenRepository.getByName(AccessTokenName.TELEGRAM_BOT_TOKEN.name()).getValue();
     }
 
     @Override
     public String getBotUsername() {
-        // Return the bot username provided by Telegram API
         return accessTokenRepository.getByName(AccessTokenName.TELEGRAM_BOT_USERNAME.name()).getValue();
     }
 }
